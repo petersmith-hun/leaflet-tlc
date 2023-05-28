@@ -11,11 +11,21 @@
     "skipLibCheck": true,
     "resolveJsonModule": true,
     "allowSyntheticDefaultImports": true,
+    "baseUrl": "./",
     "paths": {
-      "@app": [
-        "./tlc"
+      "@app/*": [
+        "src/tlc/*"
+      ],
+      "@package": [
+        "package.json"
+      ],
+      "@build-time": [
+        "build-time.json"
       ]
     }
+  },
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
   },
   "exclude": [
     "./test"
