@@ -12,7 +12,7 @@ class TLPClient {
     private readonly tlpLogsPath: string;
 
     constructor() {
-        this.tlpLogsPath = `${configurationProvider.getTLPConnection().uri}/logs`;
+        this.tlpLogsPath = `${configurationProvider.tlpConnection.uri}/logs`;
     }
 
     /**

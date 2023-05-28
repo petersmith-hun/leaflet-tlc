@@ -28,7 +28,7 @@ export default class Pipeline {
         this.mapper = mapper;
         this.publishers = publishers;
         this.disconnection = disconnection;
-        this.systemConfig = configurationProvider.getSystemConfig();
+        this.systemConfig = configurationProvider.systemConfig;
     }
 
     /**

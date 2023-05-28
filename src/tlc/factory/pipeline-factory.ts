@@ -53,7 +53,7 @@ export default class PipelineFactory {
      * Returns a singleton instance of the PipelineFactory.
      * @param disconnectionSubject RxJS Subject for disconnection notifications.
      */
-    public static getInstance(disconnectionSubject: Subject<string>): PipelineFactory {
+    public static create(disconnectionSubject: Subject<string>): PipelineFactory {
 
         if (!PipelineFactory.instance) {
             PipelineFactory.instance = new PipelineFactory(disconnectionSubject);

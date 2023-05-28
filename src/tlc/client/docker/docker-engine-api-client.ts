@@ -21,12 +21,12 @@ class DockerEngineApiClient {
     private readonly systemConfig: SystemConfig;
 
     constructor() {
-        this.dockerConnection = configurationProvider.getDockerConnection();
-        this.systemConfig = configurationProvider.getSystemConfig();
+        this.dockerConnection = configurationProvider.dockerConnection;
+        this.systemConfig = configurationProvider.systemConfig;
     }
 
     /**
-     * Retrieves the list of existing containers (regardless their status).
+     * Retrieves the list of existing containers (regardless of their status).
      */
     public getContainers(): Promise<AxiosResponse<ContainerDefinition[]>> {
         return this.callDockerEngine(DockerEnginePath.CONTAINERS, false);

@@ -11,7 +11,7 @@ class Controller {
 
     /**
      * Initializes all pipelines. It does the following steps:
-     *  1) Creates the disconnection subject to passed to the pipelines;
+     *  1) Creates the disconnection subject to be passed to the pipelines;
      *  2) Reads the configuration;
      *  3) Creates the PipelineFactory instance;
      *  4) Creates the pipelines using the factory, based on the configuration;
@@ -21,9 +21,9 @@ class Controller {
     init(): void {
 
         const disconnectionSubject = new Subject<string>();
-        const pipelineFactory = PipelineFactory.getInstance(disconnectionSubject);
+        const pipelineFactory = PipelineFactory.create(disconnectionSubject);
 
-        const pipelines: Pipeline[] = configurationProvider.getPipelines()
+        const pipelines: Pipeline[] = configurationProvider.pipelines
             .filter(pipelineConfig => pipelineConfig.enabled)
             .map(pipelineConfig => pipelineFactory.createPipeline(pipelineConfig))
 

@@ -18,7 +18,7 @@ class ConfigurationProvider {
      * Refers to the parameters under {@code tlc.system} section.
      * @see SystemConfig
      */
-    getSystemConfig(): SystemConfig {
+    public get systemConfig(): SystemConfig {
         return this.applicationConfig.systemConfig;
     }
 
@@ -27,7 +27,7 @@ class ConfigurationProvider {
      * Refers to the parameter array under {@code tlc.pipelines} section.
      * @see PipelineConfig
      */
-    getPipelines(): PipelineConfig[] {
+    public get pipelines(): PipelineConfig[] {
         return this.applicationConfig.pipelines;
     }
 
@@ -36,7 +36,7 @@ class ConfigurationProvider {
      * Refers to the parameters under {@code tlc.connection.docker} section.
      * @see DockerConnection
      */
-    getDockerConnection(): DockerConnection {
+    public get dockerConnection(): DockerConnection {
         return this.applicationConfig.connectionConfig.dockerConnection;
     }
 
@@ -45,7 +45,7 @@ class ConfigurationProvider {
      * Refers to the parameters under {@code tlc.connection.tlp} section.
      * @see TLPConnection
      */
-    getTLPConnection(): TLPConnection {
+    public get tlpConnection(): TLPConnection {
         return this.applicationConfig.connectionConfig.tlpConnection;
     }
 }
