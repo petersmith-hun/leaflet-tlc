@@ -27,7 +27,7 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
      * Returns a prototype instance of the CustomToTLPMapper, setting the source stream name and the parameter mapping.
      * @param pipelineConfig PipelineConfig object to extract the necessary configuration parameters from
      */
-    public static getInstance(pipelineConfig: PipelineConfig): CustomToTLPMapper {
+    public static create(pipelineConfig: PipelineConfig): CustomToTLPMapper {
         return new CustomToTLPMapper(pipelineConfig);
     }
 

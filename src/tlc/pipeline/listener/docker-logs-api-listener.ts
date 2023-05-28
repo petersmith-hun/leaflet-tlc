@@ -2,9 +2,9 @@ import { AxiosResponse } from "axios";
 import { IncomingMessage } from "http";
 import { Observable } from "rxjs";
 import Listener from "@app/pipeline/listener/index";
-import DockerEngineApiClient from "@app/client/docker/docker-engine-api-client";
 import { ContainerDefinition } from "@app/client/docker";
 import log from "@app/util/simple-logger";
+import dockerEngineApiClient from "@app/client/docker/docker-engine-api-client";
 
 /**
  * Listener implementation to collect logs from Docker Engine log stream API. On a successful read, it emits a slice of
@@ -12,19 +12,17 @@ import log from "@app/util/simple-logger";
  */
 export default class DockerLogsApiListener implements Listener<Uint8Array> {
 
-    private readonly dockerEngineApiClient: DockerEngineApiClient;
     readonly containerName: string;
 
     private constructor(containerName: string) {
         this.containerName = containerName.startsWith("/") ? containerName : `/${containerName}`;
-        this.dockerEngineApiClient = DockerEngineApiClient.getInstance();
     }
 
     /**
      * Returns a prototype instance of the DockerLogsApiListener.
      * @param containerName name of the container to attach this listener to
      */
-    public static getInstance(containerName: string): DockerLogsApiListener {
+    public static create(containerName: string): DockerLogsApiListener {
         return new DockerLogsApiListener(containerName);
     }
 
@@ -45,9 +43,9 @@ export default class DockerLogsApiListener implements Listener<Uint8Array> {
 
     private initListener(): Promise<AxiosResponse<IncomingMessage>> {
 
-        return this.dockerEngineApiClient.getContainers()
+        return dockerEngineApiClient.getContainers()
             .then(containerDefinitions => this.extractRequiredContainer(containerDefinitions))
-            .then(container => this.dockerEngineApiClient.getLogStream(container));
+            .then(container => dockerEngineApiClient.getLogStream(container));
     }
 
     private extractRequiredContainer(containerDefinitions: AxiosResponse<ContainerDefinition[]>): ContainerDefinition {

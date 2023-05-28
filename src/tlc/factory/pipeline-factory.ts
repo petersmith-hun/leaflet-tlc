@@ -1,17 +1,17 @@
 import { Subject } from "rxjs";
 import DockerLogsApiListener from "@app/pipeline/listener/docker-logs-api-listener";
-import ByteArrayParser from "@app/pipeline/parser/byte-array-parser";
+import byteArrayParser from "@app/pipeline/parser/byte-array-parser";
 import JoiningJsonParser from "@app/pipeline/parser/joining-json-parser";
-import ConsolePublisher from "@app/pipeline/publisher/console-publisher";
+import consolePublisher from "@app/pipeline/publisher/console-publisher";
 import Pipeline from "@app/pipeline";
 import log from "@app/util/simple-logger";
 import Mapper from "@app/pipeline/mapper";
-import IdentityMapper from "@app/pipeline/mapper/identity-mapper";
+import identityMapper from "@app/pipeline/mapper/identity-mapper";
 import LogstashToTLPMapper from "@app/pipeline/mapper/logstash-to-tlp-mapper";
 import Publisher from "@app/pipeline/publisher";
 import Listener from "@app/pipeline/listener";
 import Parser from "@app/pipeline/parser";
-import TLPPublisher from "@app/pipeline/publisher/tlp-publisher";
+import tlpPublisher from "@app/pipeline/publisher/tlp-publisher";
 import CustomToTLPMapper from "@app/pipeline/mapper/custom-to-tlp-mapper";
 import { ListenerType, MapperType, ParserType, PublisherType } from "@app/config/pipeline-options";
 import { PipelineConfig } from "@app/config";
@@ -22,23 +22,23 @@ import { PipelineConfig } from "@app/config";
 export default class PipelineFactory {
 
     private readonly listenerMap = new Map<ListenerType, (pipelineConfig: PipelineConfig) => Listener<any>>([
-        [ListenerType.DOCKER, pipelineConfig => DockerLogsApiListener.getInstance(pipelineConfig.listenerConfig!.containerName)]
+        [ListenerType.DOCKER, pipelineConfig => DockerLogsApiListener.create(pipelineConfig.listenerConfig!.containerName)]
     ]);
 
     private readonly parserMap = new Map<ParserType, Parser<any, any>>([
-        [ParserType.BYTE_ARRAY, ByteArrayParser.getInstance()],
-        [ParserType.JOINING_JSON, JoiningJsonParser.getInstance()]
+        [ParserType.BYTE_ARRAY, byteArrayParser],
+        [ParserType.JOINING_JSON, JoiningJsonParser.create()]
     ]);
 
     private readonly mapperMap = new Map<MapperType, (pipelineConfig: PipelineConfig) => Mapper<any, any>>([
-        [MapperType.IDENTITY, _ => IdentityMapper.getInstance()],
-        [MapperType.LOGSTASH_TO_TLP, pipelineConfig => LogstashToTLPMapper.getInstance(pipelineConfig.logStreamName)],
-        [MapperType.CUSTOM_TO_TLP, pipelineConfig => CustomToTLPMapper.getInstance(pipelineConfig)]
+        [MapperType.IDENTITY, _ => identityMapper],
+        [MapperType.LOGSTASH_TO_TLP, pipelineConfig => LogstashToTLPMapper.create(pipelineConfig.logStreamName)],
+        [MapperType.CUSTOM_TO_TLP, pipelineConfig => CustomToTLPMapper.create(pipelineConfig)]
     ]);
 
     private readonly publisherMap = new Map<PublisherType, Publisher<any>>([
-        [PublisherType.CONSOLE, ConsolePublisher.getInstance()],
-        [PublisherType.TLP, TLPPublisher.getInstance()]
+        [PublisherType.CONSOLE, consolePublisher],
+        [PublisherType.TLP, tlpPublisher]
     ]);
 
     private static instance: PipelineFactory;

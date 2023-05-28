@@ -36,7 +36,7 @@ export default class LogstashToTLPMapper implements Mapper<LogstashDataStructure
      * Returns a prototype instance of the LogstashToTLPMapper, setting the source stream name.
      * @param sourceStream source stream name to be set in the TLP requests
      */
-    public static getInstance(sourceStream: string): LogstashToTLPMapper {
+    public static create(sourceStream: string): LogstashToTLPMapper {
         return new LogstashToTLPMapper(sourceStream);
     }
 

@@ -5,26 +5,12 @@ import config from "config";
  * Configuration initializer and provider implementation, built using the 'config' library.
  * @see config/default.yml
  */
-export default class ConfigurationProvider {
-
-    private static instance: ConfigurationProvider;
+class ConfigurationProvider {
 
     private readonly applicationConfig: ApplicationConfig;
 
-    private constructor() {
+    constructor() {
         this.applicationConfig = new ApplicationConfig(config.get("tlc"));
-    }
-
-    /**
-     * Returns a singleton instance of the ConfigurationProvider.
-     */
-    public static getInstance(): ConfigurationProvider {
-
-        if (!ConfigurationProvider.instance) {
-            ConfigurationProvider.instance = new ConfigurationProvider();
-        }
-
-        return ConfigurationProvider.instance;
     }
 
     /**
@@ -63,3 +49,6 @@ export default class ConfigurationProvider {
         return this.applicationConfig.connectionConfig.tlpConnection;
     }
 }
+
+const configurationProvider = new ConfigurationProvider();
+export default configurationProvider;

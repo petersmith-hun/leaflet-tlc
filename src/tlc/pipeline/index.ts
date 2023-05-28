@@ -4,7 +4,7 @@ import Parser from "src/tlc/pipeline/parser";
 import Publisher from "src/tlc/pipeline/publisher";
 import Mapper from "@app/pipeline/mapper";
 import { SystemConfig } from "@app/config";
-import ConfigurationProvider from "@app/config/configuration-provider";
+import configurationProvider from "@app/config/configuration-provider";
 
 /**
  * Representation and runner logic of a log processing pipeline.
@@ -28,7 +28,7 @@ export default class Pipeline {
         this.mapper = mapper;
         this.publishers = publishers;
         this.disconnection = disconnection;
-        this.systemConfig = ConfigurationProvider.getInstance().getSystemConfig();
+        this.systemConfig = configurationProvider.getSystemConfig();
     }
 
     /**

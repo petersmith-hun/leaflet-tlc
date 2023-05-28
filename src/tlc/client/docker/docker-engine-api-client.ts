@@ -1,8 +1,8 @@
 import axios, { AxiosResponse } from "axios";
 import { IncomingMessage } from "http";
 import { DockerConnection, DockerConnectionType, SystemConfig } from "@app/config";
-import ConfigurationProvider from "@app/config/configuration-provider";
 import { ContainerDefinition } from "@app/client/docker/index";
+import configurationProvider from "@app/config/configuration-provider";
 
 enum DockerEnginePath {
     CONTAINERS = "/v1.41/containers/json?all=true",
@@ -15,29 +15,14 @@ enum DockerEnginePath {
  * and TCP (HTTP) protocol as well.
  * @see DockerConnection
  */
-export default class DockerEngineApiClient {
-
-    private static instance: DockerEngineApiClient;
+class DockerEngineApiClient {
 
     private readonly dockerConnection: DockerConnection;
     private readonly systemConfig: SystemConfig;
 
-    private constructor() {
-        const configurationProvider = ConfigurationProvider.getInstance();
+    constructor() {
         this.dockerConnection = configurationProvider.getDockerConnection();
         this.systemConfig = configurationProvider.getSystemConfig();
-    }
-
-    /**
-     * Returns a singleton instance of the DockerEngineApiClient.
-     */
-    public static getInstance(): DockerEngineApiClient {
-
-        if (!DockerEngineApiClient.instance) {
-            DockerEngineApiClient.instance = new DockerEngineApiClient();
-        }
-
-        return DockerEngineApiClient.instance;
     }
 
     /**
@@ -84,3 +69,6 @@ export default class DockerEngineApiClient {
         })
     }
 }
+
+const dockerEngineAPIClient = new DockerEngineApiClient();
+export default dockerEngineAPIClient;

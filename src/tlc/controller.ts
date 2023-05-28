@@ -1,5 +1,5 @@
 import { Subject } from "rxjs";
-import ConfigurationProvider from "@app/config/configuration-provider";
+import configurationProvider from "@app/config/configuration-provider";
 import PipelineFactory from "@app/factory/pipeline-factory";
 import Pipeline from "@app/pipeline";
 import log from "@app/util/simple-logger";
@@ -7,23 +7,7 @@ import log from "@app/util/simple-logger";
 /**
  * Logic initializing and controlling the log processing pipelines.
  */
-export default class Controller {
-
-    private static instance: Controller;
-
-    private constructor() { }
-
-    /**
-     * Returns a singleton instance of the Controller.
-     */
-    public static getInstance(): Controller {
-
-        if (!Controller.instance) {
-            Controller.instance = new Controller();
-        }
-
-        return Controller.instance;
-    }
+class Controller {
 
     /**
      * Initializes all pipelines. It does the following steps:
@@ -37,7 +21,6 @@ export default class Controller {
     init(): void {
 
         const disconnectionSubject = new Subject<string>();
-        const configurationProvider = ConfigurationProvider.getInstance();
         const pipelineFactory = PipelineFactory.getInstance(disconnectionSubject);
 
         const pipelines: Pipeline[] = configurationProvider.getPipelines()
@@ -60,3 +43,6 @@ export default class Controller {
         pipelines.forEach(pipeline => pipeline.start())
     }
 }
+
+const controller = new Controller();
+export default controller;

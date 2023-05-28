@@ -20,7 +20,7 @@ export default class JoiningJsonParser implements Parser<string, object> {
     /**
      * Returns a prototype instance of the JoiningJsonParser.
      */
-    public static getInstance(): JoiningJsonParser {
+    public static create(): JoiningJsonParser {
         return new JoiningJsonParser();
     }
 
