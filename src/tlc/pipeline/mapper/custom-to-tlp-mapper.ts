@@ -18,17 +18,9 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
     private readonly sourceStream: string;
     private readonly mapping: CustomMapping;
 
-    private constructor(pipelineConfig: PipelineConfig) {
+    constructor(pipelineConfig: PipelineConfig) {
         this.sourceStream = pipelineConfig.logStreamName;
         this.mapping = pipelineConfig.mapperConfig!;
-    }
-
-    /**
-     * Returns a prototype instance of the CustomToTLPMapper, setting the source stream name and the parameter mapping.
-     * @param pipelineConfig PipelineConfig object to extract the necessary configuration parameters from
-     */
-    public static create(pipelineConfig: PipelineConfig): CustomToTLPMapper {
-        return new CustomToTLPMapper(pipelineConfig);
     }
 
     map(inputData: object): Optional<TLPLogMessage> {

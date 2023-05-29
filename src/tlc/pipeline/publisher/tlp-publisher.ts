@@ -1,17 +1,22 @@
 import Publisher from "@app/pipeline/publisher/index";
 import TLPLogMessage from "@app/client/tlp";
-import tlpClient from "@app/client/tlp/tlp-client";
+import { tlpClient, TLPClient } from "@app/client/tlp/tlp-client";
 
 /**
  * Publisher implementation submitting the processed log objects to the Tiny Log Processor service.
  */
-class TLPPublisher implements Publisher<TLPLogMessage> {
+export class TLPPublisher implements Publisher<TLPLogMessage> {
+
+    private readonly tlpClient: TLPClient;
+
+    constructor(tlpClient: TLPClient) {
+        this.tlpClient = tlpClient;
+    }
 
     publish(data: TLPLogMessage): void {
-        tlpClient.submitLog(data);
+        this.tlpClient.submitLog(data);
     }
 
 }
 
-const tlpPublisher = new TLPPublisher();
-export default tlpPublisher;
+export const tlpPublisher = new TLPPublisher(tlpClient);

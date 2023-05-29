@@ -1,13 +1,25 @@
 import { Subject } from "rxjs";
-import configurationProvider from "@app/config/configuration-provider";
-import PipelineFactory from "@app/factory/pipeline-factory";
+import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";
+import { PipelineFactory, pipelineFactory } from "@app/factory/pipeline-factory";
 import Pipeline from "@app/pipeline";
 import log from "@app/util/simple-logger";
 
 /**
  * Logic initializing and controlling the log processing pipelines.
  */
-class Controller {
+export class Controller {
+
+    private readonly disconnectionSubject: Subject<string>;
+    private readonly configurationProvider: ConfigurationProvider;
+    private readonly pipelineFactory: PipelineFactory;
+
+    constructor(disconnectionSubject: Subject<string>, configurationProvider: ConfigurationProvider,
+                pipelineFactory: PipelineFactory) {
+
+        this.disconnectionSubject = disconnectionSubject;
+        this.configurationProvider = configurationProvider;
+        this.pipelineFactory = pipelineFactory;
+    }
 
     /**
      * Initializes all pipelines. It does the following steps:
@@ -20,20 +32,17 @@ class Controller {
      */
     init(): void {
 
-        const disconnectionSubject = new Subject<string>();
-        const pipelineFactory = PipelineFactory.create(disconnectionSubject);
-
-        const pipelines: Pipeline[] = configurationProvider.pipelines
+        const pipelines: Pipeline[] = this.configurationProvider.pipelines
             .filter(pipelineConfig => pipelineConfig.enabled)
-            .map(pipelineConfig => pipelineFactory.createPipeline(pipelineConfig))
+            .map(pipelineConfig => this.pipelineFactory.createPipeline(pipelineConfig, this.disconnectionSubject))
 
-        this.attachDisconnectionSubject(pipelines, disconnectionSubject);
+        this.attachDisconnectionSubject(pipelines);
         this.startPipelines(pipelines);
     }
 
-    private attachDisconnectionSubject(pipelines: Pipeline[], disconnectionSubject: Subject<string>): void {
+    private attachDisconnectionSubject(pipelines: Pipeline[]): void {
 
-        disconnectionSubject.subscribe(logStreamName => {
+        this.disconnectionSubject.subscribe(logStreamName => {
             log.warn(`Trying to reconnect pipeline [${logStreamName}]`)
             pipelines.find(pipeline => pipeline.logStreamName === logStreamName)?.start()
         });
@@ -44,5 +53,8 @@ class Controller {
     }
 }
 
-const controller = new Controller();
-export default controller;
+export const controller = new Controller(
+    new Subject<string>(),
+    configurationProvider,
+    pipelineFactory
+);

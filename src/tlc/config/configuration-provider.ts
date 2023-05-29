@@ -5,7 +5,7 @@ import config from "config";
  * Configuration initializer and provider implementation, built using the 'config' library.
  * @see config/default.yml
  */
-class ConfigurationProvider {
+export class ConfigurationProvider {
 
     private readonly applicationConfig: ApplicationConfig;
 
@@ -50,5 +50,4 @@ class ConfigurationProvider {
     }
 }
 
-const configurationProvider = new ConfigurationProvider();
-export default configurationProvider;
+export const configurationProvider = new ConfigurationProvider();

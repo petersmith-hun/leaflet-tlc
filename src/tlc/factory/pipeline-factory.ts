@@ -1,65 +1,32 @@
 import { Subject } from "rxjs";
-import DockerLogsApiListener from "@app/pipeline/listener/docker-logs-api-listener";
-import byteArrayParser from "@app/pipeline/parser/byte-array-parser";
-import JoiningJsonParser from "@app/pipeline/parser/joining-json-parser";
-import consolePublisher from "@app/pipeline/publisher/console-publisher";
 import Pipeline from "@app/pipeline";
 import log from "@app/util/simple-logger";
-import Mapper from "@app/pipeline/mapper";
-import identityMapper from "@app/pipeline/mapper/identity-mapper";
-import LogstashToTLPMapper from "@app/pipeline/mapper/logstash-to-tlp-mapper";
-import Publisher from "@app/pipeline/publisher";
-import Listener from "@app/pipeline/listener";
-import Parser from "@app/pipeline/parser";
-import tlpPublisher from "@app/pipeline/publisher/tlp-publisher";
-import CustomToTLPMapper from "@app/pipeline/mapper/custom-to-tlp-mapper";
-import { ListenerType, MapperType, ParserType, PublisherType } from "@app/config/pipeline-options";
 import { PipelineConfig } from "@app/config";
+import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";
+import { listenerFactory, ListenerFactory } from "@app/factory/listener-factory";
+import { mapperFactory, MapperFactory } from "@app/factory/mapper-factory";
+import { parserFactory, ParserFactory } from "@app/factory/parser-factory";
+import { publisherFactory, PublisherFactory } from "@app/factory/publisher-factory";
 
 /**
  * Factory implementation creating pipeline definitions based on the provided pipeline configuration.
  */
-export default class PipelineFactory {
+export class PipelineFactory {
 
-    private readonly listenerMap = new Map<ListenerType, (pipelineConfig: PipelineConfig) => Listener<any>>([
-        [ListenerType.DOCKER, pipelineConfig => DockerLogsApiListener.create(pipelineConfig.listenerConfig!.containerName)]
-    ]);
+    private readonly configurationProvider: ConfigurationProvider;
+    private readonly listenerFactory: ListenerFactory;
+    private readonly parserFactory: ParserFactory;
+    private readonly mapperFactory: MapperFactory;
+    private readonly publisherFactory: PublisherFactory;
 
-    private readonly parserMap = new Map<ParserType, Parser<any, any>>([
-        [ParserType.BYTE_ARRAY, byteArrayParser],
-        [ParserType.JOINING_JSON, JoiningJsonParser.create()]
-    ]);
-
-    private readonly mapperMap = new Map<MapperType, (pipelineConfig: PipelineConfig) => Mapper<any, any>>([
-        [MapperType.IDENTITY, _ => identityMapper],
-        [MapperType.LOGSTASH_TO_TLP, pipelineConfig => LogstashToTLPMapper.create(pipelineConfig.logStreamName)],
-        [MapperType.CUSTOM_TO_TLP, pipelineConfig => CustomToTLPMapper.create(pipelineConfig)]
-    ]);
-
-    private readonly publisherMap = new Map<PublisherType, Publisher<any>>([
-        [PublisherType.CONSOLE, consolePublisher],
-        [PublisherType.TLP, tlpPublisher]
-    ]);
-
-    private static instance: PipelineFactory;
-
-    private readonly disconnectionSubject: Subject<string>;
-
-    private constructor(disconnectionSubject: Subject<string>) {
-        this.disconnectionSubject = disconnectionSubject;
-    }
-
-    /**
-     * Returns a singleton instance of the PipelineFactory.
-     * @param disconnectionSubject RxJS Subject for disconnection notifications.
-     */
-    public static create(disconnectionSubject: Subject<string>): PipelineFactory {
-
-        if (!PipelineFactory.instance) {
-            PipelineFactory.instance = new PipelineFactory(disconnectionSubject);
-        }
-
-        return PipelineFactory.instance;
+    constructor(configurationProvider: ConfigurationProvider, listenerFactory: ListenerFactory,
+                parserFactory: ParserFactory, mapperFactory: MapperFactory,
+                publisherFactory: PublisherFactory) {
+        this.configurationProvider = configurationProvider;
+        this.listenerFactory = listenerFactory;
+        this.parserFactory = parserFactory;
+        this.mapperFactory = mapperFactory;
+        this.publisherFactory = publisherFactory;
     }
 
     /**
@@ -69,39 +36,23 @@ export default class PipelineFactory {
      *  - Sets up the listener, parsers, mapper and the publishers;
      *  - And passes the disconnection subject to the pipeline.
      *
-     * @param pipelineConfig
+     * @param pipelineConfig PipelineConfig object containing the configuration of log collection pipeline
+     * @param disconnectionSubject Rx Subject instance for pipelines to send stream disconnection notifications to the controller
      */
-    public createPipeline(pipelineConfig: PipelineConfig): Pipeline {
+    public createPipeline(pipelineConfig: PipelineConfig, disconnectionSubject: Subject<string>): Pipeline {
 
         log.info(`Creating pipeline with name [${pipelineConfig.logStreamName}] on source stream of type [${pipelineConfig.listenerType}]`);
 
         return new Pipeline(
             pipelineConfig.logStreamName,
-            this.getListener(pipelineConfig),
-            this.getParsers(pipelineConfig),
-            this.getMapper(pipelineConfig),
-            this.getPublishers(pipelineConfig),
-            this.disconnectionSubject
+            this.listenerFactory.getListener(pipelineConfig),
+            this.parserFactory.getParsers(pipelineConfig),
+            this.mapperFactory.getMapper(pipelineConfig),
+            this.publisherFactory.getPublishers(pipelineConfig),
+            disconnectionSubject,
+            this.configurationProvider
         );
     }
-
-    private getListener(pipelineConfig: PipelineConfig): Listener<any> {
-        return this.listenerMap.get(pipelineConfig.listenerType)!(pipelineConfig);
-    }
-
-    private getParsers(pipelineConfig: PipelineConfig): Parser<any, any>[] {
-
-        return pipelineConfig.parsers
-            .map(parser => this.parserMap.get(parser)!);
-    }
-
-    private getMapper(pipelineConfig: PipelineConfig): Mapper<any, any> {
-        return this.mapperMap.get(pipelineConfig.mapperType)!(pipelineConfig);
-    }
-
-    private getPublishers(pipelineConfig: PipelineConfig): Publisher<any>[] {
-
-        return pipelineConfig.publishers
-            .map(publisher => this.publisherMap.get(publisher)!);
-    }
 }
+
+export const pipelineFactory = new PipelineFactory(configurationProvider, listenerFactory, parserFactory, mapperFactory, publisherFactory);

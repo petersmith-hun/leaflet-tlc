@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import { IncomingMessage } from "http";
 import { DockerConnection, DockerConnectionType, SystemConfig } from "@app/config";
 import { ContainerDefinition } from "@app/client/docker/index";
-import configurationProvider from "@app/config/configuration-provider";
+import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";
 
 enum DockerEnginePath {
     CONTAINERS = "/v1.41/containers/json?all=true",
@@ -15,12 +15,12 @@ enum DockerEnginePath {
  * and TCP (HTTP) protocol as well.
  * @see DockerConnection
  */
-class DockerEngineApiClient {
+export class DockerEngineApiClient {
 
     private readonly dockerConnection: DockerConnection;
     private readonly systemConfig: SystemConfig;
 
-    constructor() {
+    constructor(configurationProvider: ConfigurationProvider) {
         this.dockerConnection = configurationProvider.dockerConnection;
         this.systemConfig = configurationProvider.systemConfig;
     }
@@ -70,5 +70,4 @@ class DockerEngineApiClient {
     }
 }
 
-const dockerEngineAPIClient = new DockerEngineApiClient();
-export default dockerEngineAPIClient;
+export const dockerEngineAPIClient = new DockerEngineApiClient(configurationProvider);

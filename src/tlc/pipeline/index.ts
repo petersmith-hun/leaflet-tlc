@@ -4,7 +4,7 @@ import Parser from "src/tlc/pipeline/parser";
 import Publisher from "src/tlc/pipeline/publisher";
 import Mapper from "@app/pipeline/mapper";
 import { SystemConfig } from "@app/config";
-import configurationProvider from "@app/config/configuration-provider";
+import { ConfigurationProvider } from "@app/config/configuration-provider";
 
 /**
  * Representation and runner logic of a log processing pipeline.
@@ -21,7 +21,8 @@ export default class Pipeline {
 
     constructor(logStreamName: string, listener: Listener<any>,
                 parsers: Parser<any, any>[], mapper: Mapper<any, any>,
-                publishers: Publisher<any>[], disconnection: Subject<string>) {
+                publishers: Publisher<any>[], disconnection: Subject<string>,
+                configurationProvider: ConfigurationProvider) {
         this.logStreamName = logStreamName;
         this.listener = listener;
         this.parsers = parsers;

@@ -1,17 +1,17 @@
 import TLPLogMessage from "@app/client/tlp/index";
 import axios from "axios";
 import log from "@app/util/simple-logger";
-import configurationProvider from "@app/config/configuration-provider";
+import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";
 
 /**
  * API client implementation for communicating with the Tiny Log Processor (TLP) service.
  * Implementation is using Axios as the network client.
  */
-class TLPClient {
+export class TLPClient {
 
     private readonly tlpLogsPath: string;
 
-    constructor() {
+    constructor(configurationProvider: ConfigurationProvider) {
         this.tlpLogsPath = `${configurationProvider.tlpConnection.uri}/logs`;
     }
 
@@ -27,5 +27,4 @@ class TLPClient {
     }
 }
 
-const tlpClient = new TLPClient();
-export default tlpClient;
+export const tlpClient = new TLPClient(configurationProvider);

@@ -28,16 +28,8 @@ export default class LogstashToTLPMapper implements Mapper<LogstashDataStructure
 
     private readonly sourceStream: string;
 
-    private constructor(sourceStream: string) {
+    constructor(sourceStream: string) {
         this.sourceStream = sourceStream;
-    }
-
-    /**
-     * Returns a prototype instance of the LogstashToTLPMapper, setting the source stream name.
-     * @param sourceStream source stream name to be set in the TLP requests
-     */
-    public static create(sourceStream: string): LogstashToTLPMapper {
-        return new LogstashToTLPMapper(sourceStream);
     }
 
     map(inputData: LogstashDataStructure): Optional<TLPLogMessage> {

@@ -13,15 +13,8 @@ export default class JoiningJsonParser implements Parser<string, object> {
 
     private buffer: string[];
 
-    private constructor() {
+    constructor() {
         this.buffer = [];
-    }
-
-    /**
-     * Returns a prototype instance of the JoiningJsonParser.
-     */
-    public static create(): JoiningJsonParser {
-        return new JoiningJsonParser();
     }
 
     parse(inputData: string): Observable<object> {

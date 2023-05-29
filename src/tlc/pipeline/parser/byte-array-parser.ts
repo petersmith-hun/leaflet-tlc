@@ -7,7 +7,7 @@ import log from "@app/util/simple-logger";
  * the Docker Engine API listener, as the is emitted as a Uint8Array stream, that must be converted before being processed.
  * Slices that cannot be parsed are suppressed (subscriber.next() is not called in such cases).
  */
-class ByteArrayParser implements Parser<Uint8Array, string> {
+export class ByteArrayParser implements Parser<Uint8Array, string> {
 
     parse(inputData: Uint8Array): Observable<string> {
 
@@ -30,5 +30,4 @@ class ByteArrayParser implements Parser<Uint8Array, string> {
     }
 }
 
-const byteArrayParser = new ByteArrayParser();
-export default byteArrayParser;
+export const byteArrayParser = new ByteArrayParser();
