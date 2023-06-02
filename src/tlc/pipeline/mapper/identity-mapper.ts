@@ -1,4 +1,4 @@
-import Mapper from "@app/pipeline/mapper/index";
+import Mapper from "@app/pipeline/mapper";
 import { Optional } from "@app/domain";
 
 /**

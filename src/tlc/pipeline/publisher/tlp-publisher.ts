@@ -1,4 +1,4 @@
-import Publisher from "@app/pipeline/publisher/index";
+import Publisher from "@app/pipeline/publisher";
 import TLPLogMessage from "@app/client/tlp";
 import { tlpClient, TLPClient } from "@app/client/tlp/tlp-client";
 

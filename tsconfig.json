@@ -16,6 +16,9 @@
       "@app/*": [
         "src/tlc/*"
       ],
+      "@test/*": [
+        "test/*"
+      ],
       "@package": [
         "package.json"
       ],

@@ -1,4 +1,4 @@
-import Mapper from "@app/pipeline/mapper/index";
+import Mapper from "@app/pipeline/mapper";
 import TLPLogMessage, { ErrorLog } from "@app/client/tlp";
 import log from "@app/util/simple-logger";
 import { Optional } from "@app/domain";

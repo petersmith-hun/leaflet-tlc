@@ -1,4 +1,4 @@
-import Publisher from "@app/pipeline/publisher/index";
+import Publisher from "@app/pipeline/publisher";
 import log from "@app/util/simple-logger";
 
 /**

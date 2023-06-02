@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { IncomingMessage } from "http";
 import { Observable } from "rxjs";
-import Listener from "@app/pipeline/listener/index";
+import Listener from "@app/pipeline/listener";
 import { ContainerDefinition } from "@app/client/docker";
 import log from "@app/util/simple-logger";
 import { DockerEngineApiClient } from "@app/client/docker/docker-engine-api-client";

@@ -1,4 +1,4 @@
-import TLPLogMessage from "@app/client/tlp/index";
+import TLPLogMessage from "@app/client/tlp";
 import axios from "axios";
 import log from "@app/util/simple-logger";
 import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";

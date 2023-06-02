@@ -1,4 +1,4 @@
-import { ApplicationConfig, DockerConnection, PipelineConfig, SystemConfig, TLPConnection } from "@app/config/index";
+import { ApplicationConfig, DockerConnection, PipelineConfig, SystemConfig, TLPConnection } from "@app/config";
 import config from "config";
 
 /**

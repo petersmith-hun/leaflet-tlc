@@ -1,5 +1,5 @@
 import { Observable } from "rxjs";
-import Parser from "@app/pipeline/parser/index";
+import Parser from "@app/pipeline/parser";
 import log from "@app/util/simple-logger";
 
 const newLineCharacter = "\n";

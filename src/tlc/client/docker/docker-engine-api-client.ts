@@ -1,7 +1,7 @@
 import axios, { AxiosResponse } from "axios";
 import { IncomingMessage } from "http";
 import { DockerConnection, DockerConnectionType, SystemConfig } from "@app/config";
-import { ContainerDefinition } from "@app/client/docker/index";
+import { ContainerDefinition } from "@app/client/docker";
 import { configurationProvider, ConfigurationProvider } from "@app/config/configuration-provider";
 
 enum DockerEnginePath {
@@ -53,7 +53,7 @@ export class DockerEngineApiClient {
         return since.toString();
     }
 
-    private callDockerEngine<T>(path: string, streaming: boolean = false): Promise<AxiosResponse<T>> {
+    private callDockerEngine<T>(path: string, streaming: boolean): Promise<AxiosResponse<T>> {
 
         return axios.request({
             socketPath: this.dockerConnection.connectionType === DockerConnectionType.SOCKET ? this.dockerConnection.uri : undefined,

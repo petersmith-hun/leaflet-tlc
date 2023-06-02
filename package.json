@@ -6,7 +6,7 @@
     "start": "ts-node ./src/tlc-main.ts",
     "diststart": "node ./dist/src/tlc-main.js",
     "livereload": "ts-node-dev --respawn --pretty --transpile-only ./src/tlc-main.ts",
-    "test": "jest --passWithNoTests",
+    "test": "jest",
     "build": "tsc -p . && tsc-alias -p tsconfig.json && ts-node .circleci/generate-build-time.ts"
   },
   "dependencies": {

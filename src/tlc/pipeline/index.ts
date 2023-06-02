@@ -1,7 +1,7 @@
 import { filter, finalize, map, mergeMap, Subject } from "rxjs";
-import Listener from "src/tlc/pipeline/listener";
-import Parser from "src/tlc/pipeline/parser";
-import Publisher from "src/tlc/pipeline/publisher";
+import Listener from "@app/pipeline/listener";
+import Parser from "@app/pipeline/parser";
+import Publisher from "@app/pipeline/publisher";
 import Mapper from "@app/pipeline/mapper";
 import { SystemConfig } from "@app/config";
 import { ConfigurationProvider } from "@app/config/configuration-provider";
