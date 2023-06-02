@@ -8,6 +8,7 @@ module.exports = {
   ],
   coverageReporters: ["text", "html"],
   coverageThreshold: {global: {lines: 90, branches: 80}},
+  maxWorkers: 2,
   moduleNameMapper: {
     '@app/(.*)': '<rootDir>/src/tlc/$1',
     '@test/(.*)': '<rootDir>/test/$1'
