@@ -1,0 +1,38 @@
+tlc:
+  system:
+    reconnection-poll-rate: 500
+  connection:
+    docker:
+      type: tcp
+      uri: http://localhost:8888
+    tlp:
+      uri: http://localhost:9999/tlp
+  pipelines:
+    - log-stream-name: app1
+      listener-type: docker
+      listener-config:
+        container-name: container-app1
+      parsers:
+        - byte-array
+        - joining-json
+      mapper-type: logstash-to-tlp
+      publishers:
+        - console
+        - tlp
+    - log-stream-name: app2
+      listener-type: docker
+      listener-config:
+        container-name: container-app2
+      parsers:
+        - byte-array
+      mapper-type: custom-to-tlp
+      mapper-config:
+        level: $.level
+        className: $.exception.class
+        message: $.exception.message
+        stackTrace: $.exception.stacktrace
+        mdc:
+          requestID: $.requestID
+      publishers:
+        - console
+      enabled: false

@@ -5,4 +5,5 @@ dist/
 node_modules/
 *.iml
 config/development.yml
+config/development_docker.yml
 package-lock.json
