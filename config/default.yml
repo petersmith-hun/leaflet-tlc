@@ -7,6 +7,10 @@ tlc:
     # Try to reconnect a disconnected log stream after milliseconds
     reconnection-poll-rate: 1000
 
+    # Enables trimming the stdout header of the Docker Engine log stream (first 8 bytes are removed, if enabled).
+    # Should be enabled on Linux systems.
+    enable-trimming-stdout-header: true
+
   # Configuration of external services
   connection:
 

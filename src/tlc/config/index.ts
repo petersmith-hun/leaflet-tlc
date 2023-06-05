@@ -1,7 +1,7 @@
 import TLPLogMessage, { ErrorLog } from "@app/client/tlp";
 import { ListenerType, MapperType, ParserType, PublisherType } from "@app/config/pipeline-options";
 
-type SystemConfigKey = "reconnection-poll-rate";
+type SystemConfigKey = "reconnection-poll-rate" | "enable-trimming-stdout-header";
 type ConnectionConfigKey = "docker" | "tlp";
 type DockerConnectionConfigKey = "type" | "uri";
 type DockerListenerConfigKey = "container-name";
@@ -56,8 +56,15 @@ export class SystemConfig {
      */
     reconnectionPollRate: number;
 
+    /**
+     * Enables trimming the stdout header of the Docker Engine log stream (first 8 bytes are removed, if enabled).
+     * Should be enabled on Linux systems.
+     */
+    enableTrimmingStdoutHeader: boolean;
+
     constructor(parameters: MapNode) {
         this.reconnectionPollRate = getValue(parameters, "reconnection-poll-rate");
+        this.enableTrimmingStdoutHeader = getValue(parameters, "enable-trimming-stdout-header");
     }
 }
 

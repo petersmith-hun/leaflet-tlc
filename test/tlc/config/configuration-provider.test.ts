@@ -73,7 +73,8 @@ describe("Unit tests for ConfigurationProvider", () => {
 
         return {
             systemConfig: {
-                reconnectionPollRate: 500
+                reconnectionPollRate: 500,
+                enableTrimmingStdoutHeader: true
             },
             connectionConfig: {
                 dockerConnection: {

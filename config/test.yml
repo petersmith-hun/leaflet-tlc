@@ -1,6 +1,7 @@
 tlc:
   system:
     reconnection-poll-rate: 500
+    enable-trimming-stdout-header: true
   connection:
     docker:
       type: tcp
