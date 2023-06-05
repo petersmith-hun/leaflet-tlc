@@ -1,4 +1,6 @@
 import { Observable } from "rxjs";
+import { SystemConfig } from "@app/config";
+import { configurationProvider } from "@app/config/configuration-provider";
 import Parser from "@app/pipeline/parser";
 import log from "@app/util/simple-logger";
 
@@ -9,12 +11,22 @@ import log from "@app/util/simple-logger";
  */
 export class ByteArrayParser implements Parser<Uint8Array, string> {
 
+    private static readonly stdoutHeaderSizeInBytes = 8;
+
+    private readonly systemConfig: SystemConfig;
+
+    constructor(systemConfig: SystemConfig) {
+        this.systemConfig = systemConfig;
+    }
+
     parse(inputData: Uint8Array): Observable<string> {
 
         return new Observable(subscriber => {
 
             try {
-                const line = this.parseLine(inputData);
+                const line = this.systemConfig.enableTrimmingStdoutHeader
+                    ? this.parseLine(inputData.slice(ByteArrayParser.stdoutHeaderSizeInBytes))
+                    : this.parseLine(inputData);
                 subscriber.next(line);
             } catch (error) {
                 log.warn("Log message could not be parsed as byte array");
@@ -30,4 +42,4 @@ export class ByteArrayParser implements Parser<Uint8Array, string> {
     }
 }
 
-export const byteArrayParser = new ByteArrayParser();
+export const byteArrayParser = new ByteArrayParser(configurationProvider.systemConfig);

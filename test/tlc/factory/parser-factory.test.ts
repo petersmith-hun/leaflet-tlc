@@ -1,12 +1,13 @@
 import { ParserFactory } from "@app/factory/parser-factory";
 import { ByteArrayParser } from "@app/pipeline/parser/byte-array-parser";
-import { PipelineConfig } from "@app/config";
+import { PipelineConfig, SystemConfig } from "@app/config";
 import { ParserType } from "@app/config/pipeline-options";
 import JoiningJsonParser from "@app/pipeline/parser/joining-json-parser";
 
 describe("Unit tests for ParserFactory", () => {
 
-    const byteArrayParser = new ByteArrayParser();
+    const systemConfig = { enableTrimmingStdoutHeader: false } as SystemConfig;
+    const byteArrayParser = new ByteArrayParser(systemConfig);
     let parserFactory: ParserFactory;
 
     beforeEach(() => {
