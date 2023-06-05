@@ -32,8 +32,8 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
                 level: {
                     levelStr: `${this.applyPath(inputData, this.mapping.level)}`.toUpperCase()
                 },
-                loggerName: this.applyPath(inputData, this.mapping.loggerName) ?? "",
-                threadName: this.applyPath(inputData, this.mapping.threadName) ?? "",
+                loggerName: this.applyPath(inputData, this.mapping.loggerName) ?? "default",
+                threadName: this.applyPath(inputData, this.mapping.threadName) ?? "main",
                 content: this.applyPath(inputData, this.mapping.content) ?? "",
                 exception: this.mapping.exception || this.mapping.message
                     ? this.mapException(inputData)

@@ -135,8 +135,8 @@ describe("Unit tests for CustomToTLPMapper", () => {
                 level: {
                     levelStr: "UNDEFINED"
                 },
-                loggerName: "",
-                threadName: "",
+                loggerName: "default",
+                threadName: "main",
                 content: "",
                 exception: undefined,
                 mdc: {}
