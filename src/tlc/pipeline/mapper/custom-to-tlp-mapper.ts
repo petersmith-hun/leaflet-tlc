@@ -28,7 +28,7 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
         try {
             return {
                 source: this.sourceStream,
-                timeStamp: this.applyPath(inputData, this.mapping.timeStamp) ?? 0,
+                timeStamp: new Date(this.applyPath(inputData, this.mapping.timeStamp) ?? 0).getTime(),
                 level: {
                     levelStr: `${this.applyPath(inputData, this.mapping.level)}`.toUpperCase()
                 },

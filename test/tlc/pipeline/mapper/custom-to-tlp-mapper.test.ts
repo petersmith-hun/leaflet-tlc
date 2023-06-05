@@ -108,7 +108,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
 
             return {
                 source: logStreamName,
-                timeStamp: "2023-05-29T13:21:30Z",
+                timeStamp: 1685366490000,
                 level: {
                     levelStr: "ERROR"
                 },
