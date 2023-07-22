@@ -75,7 +75,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
                 message: "$.error.message",
                 stackTrace: "$.error.metadata[1]",
                 className: "$.error.metadata[0]",
-                mdc: {
+                context: {
                     requestID: "$.context.requestID",
                     userID: "$.context.userID"
                 }
@@ -120,7 +120,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
                     message: "Something went wrong",
                     stackTrace: "\tapp.handler.RequestHandler\n\tapp.Main"
                 },
-                mdc: {
+                context: {
                     requestID: "request-1234",
                     userID: "user-1"
                 }
@@ -139,7 +139,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
                 threadName: "main",
                 content: "",
                 exception: undefined,
-                mdc: {}
+                context: {}
             }
         }
     });

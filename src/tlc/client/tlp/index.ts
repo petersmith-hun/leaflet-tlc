@@ -20,5 +20,5 @@ export default interface TLPLogMessage {
     };
     content: string;
     exception?: ErrorLog;
-    mdc?: object;
+    context?: object;
 }

@@ -47,7 +47,7 @@ export default class LogstashToTLPMapper implements Mapper<LogstashDataStructure
                 exception: inputData.stack_trace
                     ? this.mapException(inputData)
                     : undefined,
-                mdc: inputData.mdc ?? {}
+                context: inputData.mdc ?? {}
             };
         } catch (error) {
             log.error(`Could not map input data; reason=${error}`);

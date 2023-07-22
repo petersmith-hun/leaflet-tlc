@@ -38,7 +38,7 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
                 exception: this.mapping.exception || this.mapping.message
                     ? this.mapException(inputData)
                     : undefined,
-                mdc: this.mapMDC(inputData)
+                context: this.mapMDC(inputData)
             };
 
         } catch (error) {
@@ -65,9 +65,9 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
     private mapMDC(inputData: object): object {
 
         const mdc: { [key: string]: string | undefined } = {};
-        if (this.mapping.mdc) {
-            for (let key of Object.keys(this.mapping.mdc)) {
-                const path = this.mapping.mdc[key];
+        if (this.mapping.context) {
+            for (let key of Object.keys(this.mapping.context)) {
+                const path = this.mapping.context[key];
                 mdc[key] = this.applyPath(inputData, path);
             }
         }

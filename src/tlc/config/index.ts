@@ -177,7 +177,7 @@ export type ListenerConfig = DockerListenerConfig;
  * @see TLPLogMessage
  * @see ErrorLog
  */
-export type CustomMapping = Partial<{ [key in keyof TLPLogMessage]: string; } & { [key in keyof ErrorLog]: string; } & { mdc: object }>
+export type CustomMapping = Partial<{ [key in keyof TLPLogMessage]: string; } & { [key in keyof ErrorLog]: string; } & { context: object }>
 
 /**
  * Log processing pipeline definition.
