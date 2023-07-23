@@ -78,7 +78,7 @@ describe("Unit tests for LogstashToTLPMapper", () => {
                     message: "null",
                     stackTrace: "stacktrace"
                 } : undefined,
-                mdc: withExceptionAndMDC
+                context: withExceptionAndMDC
                     ? { "requestID": "request-1234" }
                     : {}
             }

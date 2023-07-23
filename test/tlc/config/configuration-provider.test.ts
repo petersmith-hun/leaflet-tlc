@@ -118,7 +118,7 @@ describe("Unit tests for ConfigurationProvider", () => {
                         className: "$.exception.class",
                         message: "$.exception.message",
                         stackTrace: "$.exception.stacktrace",
-                        mdc: {
+                        context: {
                             requestID: "$.requestID"
                         }
                     },
