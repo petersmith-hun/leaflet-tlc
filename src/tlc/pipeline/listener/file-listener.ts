@@ -1,5 +1,6 @@
 import assert from "node:assert";
 import * as fsp from "node:fs/promises";
+import { EventEmitter } from "node:events";
 import { Observable, Subscriber } from "rxjs";
 import Listener from ".";
 
@@ -34,12 +35,13 @@ export default class FileListener implements Listener<Uint8Array> {
   }
 
   private async readChanges (subscriber: Subscriber<Uint8Array>) {
-    assert(this.fileHandle !== undefined);
-
     while (true) {
       const stats = await this.fileHandle.stat();
       const bytesToRead = Math.min(this.readBuffer.byteLength, stats.size);
-      assert(bytesToRead > 0);
+      assert(
+        bytesToRead >= 0,
+        `Invalid amount of bytes to read! offset=${this.offset} size=${stats.size}`
+      );
 
       const { bytesRead } = await this.fileHandle.read({
         buffer: this.readBuffer,
