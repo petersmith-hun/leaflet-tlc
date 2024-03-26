@@ -1,8 +1,7 @@
-export const blockExecution = (): Promise<void> => {
-
-    return new Promise<void>(resolve => {
-        setTimeout(() => {
-            resolve();
-        }, 50);
-    });
+export function sleep(timeInMs: number = 0) {
+  return new Promise(resolve =>
+    setTimeout(resolve, timeInMs)
+  );
 }
+
+export const blockExecution = () => sleep(50);
