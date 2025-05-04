@@ -37,3 +37,13 @@ tlc:
       publishers:
         - console
       enabled: false
+    - log-stream-name: app3
+      listener-type: file
+      listener-config:
+        source-file-path: /opt/test.log
+      parsers:
+        - byte-array
+        - joining-json
+      mapper-type: logstash-to-tlp
+      publishers:
+        - console
