@@ -32,9 +32,10 @@ tlc:
   # Pipeline configurations
   # -- example --
   # - log-stream-name: my-log-stream  # (arbitrary)
-  #   listener-type: docker           # (docker = will read logs from a Docker log stream; currently only Docker is supported)
+  #   listener-type: docker           # (docker = will read logs from a Docker log stream; file = will read logs from a plain text log file)
   #   listener-config:                # configuration for the specified listener
   #     container-name: my-container  # Docker specific configuration, name of the container to listen logs of
+  #     source-file-path:             # File source specific configuration, relative or absolute path of the source log file
   #   parsers:                        # parsers to handle the log stream, order of the specified parsers matter
   #     - byte-array                  # parses the log messages from a byte array into a string
   #     - joining-json                # joins the pieces of strings into a JSON document
@@ -47,7 +48,8 @@ tlc:
   #     content: $.message            #    and the values are JSON path expressions referencing the fields of the log
   #     timeStamp: $.date             #    message structure to be mapped
   #     [ ... ]
-  #   publishers:                     # publisher submit the logs for further processing
+  #   publishers:                     # publishers submit the logs for further processing
   #     - console                     # displays the collected log messages on the console (only recommended for debugging purposes)
+  #     - tlp                         # submits the collected log messages to TLP
   #   enabled: true                   # optional flag to explicitly enable/disable this pipeline (defaults to true)
   pipelines: []

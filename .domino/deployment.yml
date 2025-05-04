@@ -1,0 +1,29 @@
+domino:
+  deployments:
+    tlc:
+      source:
+        type: DOCKER
+        home: "[dsm:common.home.docker]"
+        resource: tlc
+      target:
+        hosts:
+          - psproghu
+      execution:
+        command-name: app_tlc
+        via: STANDARD
+        args:
+          network-mode: host
+          environment:
+            NODE_OPTIONS: --max_old_space_size=64
+            NODE_ENV: tlc_production
+            NODE_CONFIG_DIR: /opt/tlc
+          volumes:
+            "[dsm:volume.config.tlc]": "/opt/tlc/tlc_production.yml:ro"
+            "/var/run/docker.sock": "/var/run/docker.sock:ro"
+            "/etc/timezone": "/etc/timezone:ro"
+            "/etc/localtime": "/etc/localtime:ro"
+          restart-policy: unless-stopped
+      health-check:
+        enabled: false
+      info:
+        enabled: false

@@ -1,8 +1,9 @@
 import { ListenerType } from "@app/config/pipeline-options";
-import { PipelineConfig } from "@app/config";
+import { DockerListenerConfig, FileListenerConfig, PipelineConfig } from "@app/config";
 import Listener from "@app/pipeline/listener";
 import DockerLogsApiListener from "@app/pipeline/listener/docker-logs-api-listener";
 import { DockerEngineApiClient, dockerEngineAPIClient } from "@app/client/docker/docker-engine-api-client";
+import FileListener from "@app/pipeline/listener/file-listener";
 
 type ListenerMap = Map<ListenerType, (pipelineConfig: PipelineConfig) => Listener<any>>;
 
@@ -28,8 +29,12 @@ export class ListenerFactory {
 
     private initListenerMap(dockerEngineAPIClient: DockerEngineApiClient): ListenerMap {
 
+        // @ts-ignore
         return new Map([
-            [ListenerType.DOCKER, pipelineConfig => new DockerLogsApiListener(dockerEngineAPIClient, pipelineConfig.listenerConfig!.containerName)]
+            [ListenerType.DOCKER, pipelineConfig =>
+                new DockerLogsApiListener(dockerEngineAPIClient, (pipelineConfig.listenerConfig as DockerListenerConfig).containerName)],
+            [ListenerType.FILE, pipelineConfig =>
+                new FileListener((pipelineConfig.listenerConfig as FileListenerConfig).sourceFilePath)]
         ]);
     }
 }

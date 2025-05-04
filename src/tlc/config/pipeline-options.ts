@@ -6,7 +6,12 @@ export enum ListenerType {
     /**
      * Selects Docker Engine log stream API as data source.
      */
-    DOCKER = "docker"
+    DOCKER = "docker",
+
+    /**
+     * Selects a plain text log file as data source.
+     */
+    FILE = "file"
 }
 
 /**
