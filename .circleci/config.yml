@@ -141,6 +141,7 @@ jobs:
   deploy:
     executor: python
     steps:
+      - checkout
       - attach_workspace:
           at: << pipeline.parameters.workspace_dir >>
       - run:
