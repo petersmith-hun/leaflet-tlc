@@ -55,9 +55,10 @@ describe("Unit tests for ConfigurationProvider", () => {
             const result = configurationProvider.pipelines;
 
             // then
-            expect(result.length).toBe(2);
+            expect(result.length).toBe(3);
             expectNormalized(result[0], configuration.pipelines[0]);
             expectNormalized(result[1], configuration.pipelines[1]);
+            expectNormalized(result[2], configuration.pipelines[2]);
         });
     });
 
@@ -126,6 +127,22 @@ describe("Unit tests for ConfigurationProvider", () => {
                         PublisherType.CONSOLE
                     ],
                     enabled: false
+                },
+                {
+                    logStreamName: "app3",
+                    listenerType: ListenerType.FILE,
+                    listenerConfig: {
+                        sourceFilePath: "/opt/test.log",
+                    },
+                    parsers: [
+                        ParserType.BYTE_ARRAY,
+                        ParserType.JOINING_JSON
+                    ],
+                    mapperType: MapperType.LOGSTASH_TO_TLP,
+                    publishers: [
+                        PublisherType.CONSOLE
+                    ],
+                    enabled: true
                 }
             ]
         } as ApplicationConfig;

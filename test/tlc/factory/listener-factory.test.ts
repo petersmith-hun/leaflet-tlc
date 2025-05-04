@@ -3,6 +3,7 @@ import { ListenerFactory } from "@app/factory/listener-factory";
 import { ListenerType } from "@app/config/pipeline-options";
 import { PipelineConfig } from "@app/config";
 import DockerLogsApiListener from "@app/pipeline/listener/docker-logs-api-listener";
+import FileListener from "@app/pipeline/listener/file-listener";
 import sinon from "sinon";
 
 describe("Unit tests for ListenerFactory", () => {
@@ -32,6 +33,20 @@ describe("Unit tests for ListenerFactory", () => {
             expect(result.containerName).toBe("/container-1");
         });
 
+        it("should return a file listener", () => {
+
+            // given
+            const pipelineConfig = preparePipelineConfig(ListenerType.FILE);
+
+            // when
+            const result = listenerFactory.getListener(pipelineConfig);
+
+            // then
+            expect(result).toBeInstanceOf(FileListener);
+            // @ts-ignore
+            expect(result.filename).toBe("/opt/test.log");
+        });
+
         it("should return different docker logs listener instances on consecutive calls", () => {
 
             // given
@@ -45,11 +60,25 @@ describe("Unit tests for ListenerFactory", () => {
             expect(resultFirst !== resultSecond).toBe(true);
         });
 
+        it("should return different file listener instances on consecutive calls", () => {
+
+            // given
+            const pipelineConfig = preparePipelineConfig(ListenerType.FILE);
+
+            // when
+            const resultFirst = listenerFactory.getListener(pipelineConfig);
+            const resultSecond = listenerFactory.getListener(pipelineConfig);
+
+            // then
+            expect(resultFirst !== resultSecond).toBe(true);
+        });
+
         function preparePipelineConfig(listener: ListenerType): PipelineConfig {
             return {
                 listenerType: listener,
                 listenerConfig: {
-                    containerName: "container-1"
+                    containerName: listener === ListenerType.DOCKER ? "container-1" : null,
+                    sourceFilePath: listener === ListenerType.FILE ? "/opt/test.log" : null,
                 }
             } as unknown as PipelineConfig;
         }
