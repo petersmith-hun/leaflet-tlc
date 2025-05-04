@@ -3,6 +3,7 @@ build/
 coverage/
 dist/
 node_modules/
+tmp/
 *.iml
 config/development.yml
 config/development_docker.yml

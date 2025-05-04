@@ -5,6 +5,7 @@ type SystemConfigKey = "reconnection-poll-rate" | "enable-trimming-stdout-header
 type ConnectionConfigKey = "docker" | "tlp";
 type DockerConnectionConfigKey = "type" | "uri";
 type DockerListenerConfigKey = "container-name";
+type FileListenerConfigKey = "source-file-path";
 type PipelineConfigKey =
     "enabled"
     | "log-stream-name"
@@ -23,6 +24,7 @@ type ConfigKey =
 type ConfigNode = "system" | "connection" | "pipelines";
 type PipelineConfigNode = { [Key in PipelineConfigKey]: string | string[] };
 type DockerListenerConfigNode = { [Key in DockerListenerConfigKey]: string | string[] };
+type FileListenerConfigNode = { [Key in FileListenerConfigKey]: string | string[] };
 type MapValue = string | number | boolean | object | undefined;
 type MapNode = Map<string, MapValue> | undefined;
 
@@ -41,6 +43,10 @@ const getPipelineConfigValue = <Type>(parameters: PipelineConfigNode, key: Pipel
 };
 
 const getDockerListenerConfigValue = <Type>(parameters: DockerListenerConfigNode, key: DockerListenerConfigKey): Type => {
+    return parameters[key] as Type;
+};
+
+const getFileListenerConfigValue = <Type>(parameters: FileListenerConfigNode, key: FileListenerConfigKey): Type => {
     return parameters[key] as Type;
 };
 
@@ -164,9 +170,21 @@ export class DockerListenerConfig {
 }
 
 /**
+ * Configuration parameters of the file log stream listener.
+ */
+export class FileListenerConfig {
+
+    sourceFilePath: string;
+
+    constructor(parameters: FileListenerConfigNode) {
+        this.sourceFilePath = getFileListenerConfigValue(parameters, "source-file-path");
+    }
+}
+
+/**
  * Aggregator type for all listener configuration classes.
  */
-export type ListenerConfig = DockerListenerConfig;
+export type ListenerConfig = DockerListenerConfig | FileListenerConfig;
 
 // -- Pipeline configuration
 
@@ -236,7 +254,7 @@ export class PipelineConfig {
         this.listenerType = getPipelineConfigValue(parameters, "listener-type") as ListenerType;
         this.listenerConfig = this.listenerType === ListenerType.DOCKER
             ? new DockerListenerConfig(getPipelineConfigValue(parameters, "listener-config"))
-            : undefined;
+            : new FileListenerConfig(getPipelineConfigValue(parameters, "listener-config"));
         this.parsers = getPipelineConfigValue(parameters, "parsers");
         this.mapperType = getPipelineConfigValue(parameters, "mapper-type");
         this.mapperConfig = getPipelineConfigValue(parameters, "mapper-config");

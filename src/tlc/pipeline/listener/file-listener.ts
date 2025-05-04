@@ -1,9 +1,12 @@
 import assert from "node:assert";
 import * as fsp from "node:fs/promises";
-import { EventEmitter } from "node:events";
 import { Observable, Subscriber } from "rxjs";
 import Listener from ".";
 
+/**
+ * Listener implementation to collect logs from plain text log file. On a successful read, it emits a slice of data as
+ * byte array.
+ */
 export default class FileListener implements Listener<Uint8Array> {
   private readonly readBuffer = Buffer.alloc(1024);
   private readonly filename: string;
