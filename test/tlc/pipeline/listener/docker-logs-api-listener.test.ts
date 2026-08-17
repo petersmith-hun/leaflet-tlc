@@ -3,10 +3,11 @@ import { DockerEngineApiClient } from "@app/client/docker/docker-engine-api-clie
 import DockerLogsApiListener from "@app/pipeline/listener/docker-logs-api-listener";
 import { IncomingMessage } from "http";
 import { AxiosResponse } from "axios";
-import { ContainerDefinition } from "@app/client/docker";
 import { blockExecution } from "@test/util";
 
 describe("Unit tests for DockerLogsApiListener", () => {
+
+    const containerDefinition = { Id: "container1", Names: ["/container1"] };
 
     let dockerEngineApiClientMock: SinonStubbedInstance<DockerEngineApiClient>;
     let incomingMessageMock: SinonStubbedInstance<IncomingMessage>;
@@ -15,28 +16,7 @@ describe("Unit tests for DockerLogsApiListener", () => {
     beforeEach(() => {
         dockerEngineApiClientMock = sinon.createStubInstance(DockerEngineApiClient);
         incomingMessageMock = sinon.createStubInstance(IncomingMessage);
-        dockerLogsApiListener = new DockerLogsApiListener(dockerEngineApiClientMock, "container1");
-    });
-
-    describe("Test scenarios for constructor", () => {
-
-        it("should handle container name with trailing slash", () => {
-
-            // when
-            const result = new DockerLogsApiListener(dockerEngineApiClientMock, "/container1");
-
-            // then
-            expect(result.containerName).toBe("/container1");
-        });
-
-        it("should handle container name without trailing slash", () => {
-
-            // when
-            const result = new DockerLogsApiListener(dockerEngineApiClientMock, "container1");
-
-            // then
-            expect(result.containerName).toBe("/container1");
-        });
+        dockerLogsApiListener = new DockerLogsApiListener(dockerEngineApiClientMock, containerDefinition);
     });
 
     describe("Test scenarios for #listen", () => {
@@ -45,13 +25,10 @@ describe("Unit tests for DockerLogsApiListener", () => {
 
             // given
             const container1 = { Id: "container1", Names: ["/container1"] };
-            const container2 = { Id: "container2", Names: ["/container2"] };
             const expectedLine = "this is a log message";
-            const containersResponse = { data: [container1, container2] } as unknown as AxiosResponse<ContainerDefinition[]>;
             const logStreamResponse = { data: incomingMessageMock } as unknown as AxiosResponse<IncomingMessage>;
 
-            await dockerEngineApiClientMock.getContainers.resolves(containersResponse);
-            await dockerEngineApiClientMock.getLogStream.withArgs(container1).resolves(logStreamResponse);
+            dockerEngineApiClientMock.getLogStream.withArgs(container1).resolves(logStreamResponse);
             incomingMessageMock.on.returns(incomingMessageMock);
 
             // when
@@ -72,11 +49,9 @@ describe("Unit tests for DockerLogsApiListener", () => {
 
             // given
             const container1 = { Id: "container1", Names: ["/container1"] };
-            const containersResponse = { data: [container1] } as unknown as AxiosResponse<ContainerDefinition[]>;
             const logStreamResponse = { data: incomingMessageMock } as unknown as AxiosResponse<IncomingMessage>;
 
-            await dockerEngineApiClientMock.getContainers.resolves(containersResponse);
-            await dockerEngineApiClientMock.getLogStream.withArgs(container1).resolves(logStreamResponse);
+            dockerEngineApiClientMock.getLogStream.withArgs(container1).resolves(logStreamResponse);
             incomingMessageMock.on.returns(incomingMessageMock);
 
             // when
@@ -94,7 +69,7 @@ describe("Unit tests for DockerLogsApiListener", () => {
         it("should complete the observable on error", async () => {
 
             // given
-            await dockerEngineApiClientMock.getContainers.rejects("Something went wrong");
+            dockerEngineApiClientMock.getLogStream.rejects("Something went wrong");
 
             // when
             const result = dockerLogsApiListener.listen();
@@ -105,23 +80,17 @@ describe("Unit tests for DockerLogsApiListener", () => {
 
             expect(subscription.closed).toBe(true);
         });
+    });
 
-        it("should immediately complete the observable if container is missing", async () => {
+    describe("Test scenarios for #sourceName", () => {
 
-            // given
-            const container1 = { Id: "container1", Names: ["/not-the-expected-container"] };
-            const containersResponse = { data: [container1] } as unknown as AxiosResponse<ContainerDefinition[]>;
-
-            await dockerEngineApiClientMock.getContainers.resolves(containersResponse);
+        it("should return the source container name prefixed with 'docker:'", () => {
 
             // when
-            const result = dockerLogsApiListener.listen();
+            const result = dockerLogsApiListener.sourceName();
 
             // then
-            const subscription = result.subscribe(() => {});
-            await blockExecution();
-
-            expect(subscription.closed).toBe(true);
+            expect(result).toBe(`docker:${containerDefinition.Names[0]}`);
         });
     });
 });

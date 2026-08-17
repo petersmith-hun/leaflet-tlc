@@ -40,5 +40,17 @@ describe("Unit tests for FileListener", () => {
     await testFile.close();
     await fsp.rm(testFilePath);
   });
+
+  describe("Test scenarios for #sourceName", () => {
+
+    it("should return the source container name prefixed with 'docker:'", () => {
+
+      // when
+      const result = fileListener.sourceName();
+
+      // then
+      expect(result).toBe(`file:${testFilePath}`);
+    });
+  });
 })
 

@@ -1,9 +1,11 @@
 import CustomToTLPMapper from "@app/pipeline/mapper/custom-to-tlp-mapper";
 import { CustomMapping, PipelineConfig } from "@app/config";
+import { Context } from "@app/domain";
 
 describe("Unit tests for CustomToTLPMapper", () => {
 
     const logStreamName = "log-stream-1";
+    const context: Context = { logSource: "src", logStreamName };
     let customToTLPMapper: CustomToTLPMapper;
 
     describe("Test scenarios for #map", () => {
@@ -21,7 +23,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
             } as unknown as PipelineConfig);
 
             // when
-            const result = customToTLPMapper.map(logMessage);
+            const result = customToTLPMapper.map(logMessage, context);
 
             // then
             expect(result).toStrictEqual(expectedTLPLogMessage);
@@ -40,7 +42,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
             } as unknown as PipelineConfig);
 
             // when
-            const result = customToTLPMapper.map(logMessage);
+            const result = customToTLPMapper.map(logMessage, context);
 
             // then
             expect(result).toStrictEqual(expectedTLPLogMessage);
@@ -58,7 +60,7 @@ describe("Unit tests for CustomToTLPMapper", () => {
             } as unknown as PipelineConfig);
 
             // when
-            const result = customToTLPMapper.map(logMessage);
+            const result = customToTLPMapper.map(logMessage, context);
 
             // then
             expect(result).toBeNull();
@@ -122,7 +124,9 @@ describe("Unit tests for CustomToTLPMapper", () => {
                 },
                 context: {
                     requestID: "request-1234",
-                    userID: "user-1"
+                    userID: "user-1",
+                    log_source: "src",
+                    log_stream: "log-stream-1"
                 }
             }
         }
@@ -139,7 +143,10 @@ describe("Unit tests for CustomToTLPMapper", () => {
                 threadName: "main",
                 content: "",
                 exception: undefined,
-                context: {}
+                context: {
+                    log_source: "src",
+                    log_stream: "log-stream-1",
+                }
             }
         }
     });

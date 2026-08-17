@@ -27,10 +27,10 @@ describe("Unit tests for Controller", () => {
         pipelineFactoryMock = sinon.createStubInstance(PipelineFactory);
         pipelineStubEnabled1 = sinon.createStubInstance(Pipeline);
         // @ts-ignore
-        pipelineStubEnabled1["logStreamName"] = pipelineConfig[0].logStreamName;
+        pipelineStubEnabled1["context"] = { logStreamName: pipelineConfig[0].logStreamName };
         pipelineStubEnabled2 = sinon.createStubInstance(Pipeline);
         // @ts-ignore
-        pipelineStubEnabled2["logStreamName"] = pipelineConfig[1].logStreamName;
+        pipelineStubEnabled2["context"] = { logStreamName: pipelineConfig[1].logStreamName };
         configurationProviderMock = { pipelines: pipelineConfig } as ConfigurationProvider;
 
         controller = new Controller(disconnectionSubjectMock, configurationProviderMock, pipelineFactoryMock)
@@ -38,14 +38,14 @@ describe("Unit tests for Controller", () => {
 
     describe("Test scenarios for #init", () => {
 
-        it("should read configuration and initialize pipelines", () => {
+        it("should read configuration and initialize pipelines", async () => {
 
             // given
-            pipelineFactoryMock.createPipeline.withArgs(pipelineConfig[0], disconnectionSubjectMock).returns(pipelineStubEnabled1);
-            pipelineFactoryMock.createPipeline.withArgs(pipelineConfig[1], disconnectionSubjectMock).returns(pipelineStubEnabled2);
+            pipelineFactoryMock.createPipeline.withArgs(pipelineConfig[0], disconnectionSubjectMock).resolves([pipelineStubEnabled1]);
+            pipelineFactoryMock.createPipeline.withArgs(pipelineConfig[1], disconnectionSubjectMock).resolves([pipelineStubEnabled2]);
 
             // when
-            controller.init();
+            await controller.init();
 
             // then
             sinon.assert.callCount(pipelineFactoryMock.createPipeline, 2);

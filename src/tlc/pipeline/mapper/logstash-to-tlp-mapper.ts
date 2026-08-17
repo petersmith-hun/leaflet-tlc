@@ -1,7 +1,7 @@
 import Mapper from "@app/pipeline/mapper";
 import TLPLogMessage, { ErrorLog } from "@app/client/tlp";
 import log from "@app/util/simple-logger";
-import { Optional } from "@app/domain";
+import { Context, Optional } from "@app/domain";
 
 type LogstashErrorLevel = "TRACE" | "DEBUG" | "INFO" | "WARN" | "ERROR";
 
@@ -32,9 +32,13 @@ export default class LogstashToTLPMapper implements Mapper<LogstashDataStructure
         this.sourceStream = sourceStream;
     }
 
-    map(inputData: LogstashDataStructure): Optional<TLPLogMessage> {
+    map(inputData: LogstashDataStructure, context: Context): Optional<TLPLogMessage> {
 
         try {
+            const logContext: any = inputData.mdc ?? {};
+            logContext["log_stream"] = context.logStreamName;
+            logContext["log_source"] = context.logSource;
+
             return {
                 source: this.sourceStream,
                 timeStamp: new Date(inputData["@timestamp"]).getTime(),
@@ -47,7 +51,7 @@ export default class LogstashToTLPMapper implements Mapper<LogstashDataStructure
                 exception: inputData.stack_trace
                     ? this.mapException(inputData)
                     : undefined,
-                context: inputData.mdc ?? {}
+                context: logContext
             };
         } catch (error) {
             log.error(`Could not map input data; reason=${error}`);

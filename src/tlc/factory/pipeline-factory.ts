@@ -7,6 +7,7 @@ import { listenerFactory, ListenerFactory } from "@app/factory/listener-factory"
 import { mapperFactory, MapperFactory } from "@app/factory/mapper-factory";
 import { parserFactory, ParserFactory } from "@app/factory/parser-factory";
 import { publisherFactory, PublisherFactory } from "@app/factory/publisher-factory";
+import { randomUUID } from "node:crypto";
 
 /**
  * Factory implementation creating pipeline definitions based on the provided pipeline configuration.
@@ -30,28 +31,35 @@ export class PipelineFactory {
     }
 
     /**
-     * Creates a pipeline definition based on the provided configuration.
+     * Creates one or more pipeline definitions based on the provided configuration.
      * The following steps will be done:
-     *  - Sets the pipeline's name to the provided log stream name;
-     *  - Sets up the listener, parsers, mapper and the publishers;
+     *  - Sets the pipeline's name to the provided log stream name with a random suffix;
+     *  - Sets up the listener, parsers, mappers, and the publishers;
      *  - And passes the disconnection subject to the pipeline.
+     * Docker log streams support connecting to multiple containers using the * suffix in their name. In such cases,
+     * one pipeline will be created for each container.
      *
      * @param pipelineConfig PipelineConfig object containing the configuration of log collection pipeline
      * @param disconnectionSubject Rx Subject instance for pipelines to send stream disconnection notifications to the controller
      */
-    public createPipeline(pipelineConfig: PipelineConfig, disconnectionSubject: Subject<string>): Pipeline {
+    public async createPipeline(pipelineConfig: PipelineConfig, disconnectionSubject: Subject<string>): Promise<Pipeline[]> {
 
-        log.info(`Creating pipeline with name [${pipelineConfig.logStreamName}] on source stream of type [${pipelineConfig.listenerType}]`);
+        return (await this.listenerFactory.getListeners(pipelineConfig)).map(listener => {
 
-        return new Pipeline(
-            pipelineConfig.logStreamName,
-            this.listenerFactory.getListener(pipelineConfig),
-            this.parserFactory.getParsers(pipelineConfig),
-            this.mapperFactory.getMapper(pipelineConfig),
-            this.publisherFactory.getPublishers(pipelineConfig),
-            disconnectionSubject,
-            this.configurationProvider
-        );
+            const pipelineName = `${pipelineConfig.logStreamName}-${randomUUID().substring(0, 4)}`;
+
+            log.info(`Creating pipeline with name [${pipelineName}] on source stream of type [${pipelineConfig.listenerType}]`);
+
+            return new Pipeline(
+                pipelineName,
+                listener,
+                this.parserFactory.getParsers(pipelineConfig),
+                this.mapperFactory.getMapper(pipelineConfig),
+                this.publisherFactory.getPublishers(pipelineConfig),
+                disconnectionSubject,
+                this.configurationProvider
+            );
+        })
     }
 }
 

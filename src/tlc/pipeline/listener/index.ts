@@ -12,4 +12,9 @@ export default interface Listener<T> {
      * Starts listening to a log stream.
      */
     listen(): Observable<T>;
+
+    /**
+     * Returns the name of the source this listener is listening to.
+     */
+    sourceName(): string;
 }

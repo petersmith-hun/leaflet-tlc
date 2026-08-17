@@ -30,21 +30,28 @@ export class Controller {
      *  5) Attaches the disconnection subject to the pipelines;
      *  6) Finally, starts the pipelines.
      */
-    init(): void {
+    async init(): Promise<void> {
 
-        const pipelines: Pipeline[] = this.configurationProvider.pipelines
-            .filter(pipelineConfig => pipelineConfig.enabled)
-            .map(pipelineConfig => this.pipelineFactory.createPipeline(pipelineConfig, this.disconnectionSubject))
+        try {
+            const pipelinePromises = this.configurationProvider.pipelines
+                .filter(pipelineConfig => pipelineConfig.enabled)
+                .map(pipelineConfig => this.pipelineFactory.createPipeline(pipelineConfig, this.disconnectionSubject));
 
-        this.attachDisconnectionSubject(pipelines);
-        this.startPipelines(pipelines);
+            const pipelines = (await Promise.all(pipelinePromises)).flat();
+
+            this.attachDisconnectionSubject(pipelines);
+            this.startPipelines(pipelines);
+
+        } catch (error) {
+            log.error(`Failed to initialize pipelines; reason=${error}`);
+        }
     }
 
     private attachDisconnectionSubject(pipelines: Pipeline[]): void {
 
         this.disconnectionSubject.subscribe(logStreamName => {
             log.warn(`Trying to reconnect pipeline [${logStreamName}]`)
-            pipelines.find(pipeline => pipeline.logStreamName === logStreamName)?.start()
+            pipelines.find(pipeline => pipeline.context.logStreamName === logStreamName)?.start()
         });
     }
 
