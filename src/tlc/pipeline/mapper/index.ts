@@ -1,4 +1,4 @@
-import { Optional } from "@app/domain";
+import { Context, Optional } from "@app/domain";
 
 /**
  * Step #3 in a log collection pipeline.
@@ -10,7 +10,9 @@ export default interface Mapper<I, O> {
 
     /**
      * Maps the given input data of type <T> to an output object of type <O>.
+     *
      * @param inputData input data of type <T> to be mapped.
+     * @param context context information object
      */
-    map(inputData: I): Optional<O>;
+    map(inputData: I, context: Context): Optional<O>;
 }

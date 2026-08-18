@@ -1,5 +1,5 @@
 import Mapper from "@app/pipeline/mapper";
-import { Optional } from "@app/domain";
+import { Context, Optional } from "@app/domain";
 
 /**
  * Mapper implementation immediately returning the given input data.
@@ -7,7 +7,7 @@ import { Optional } from "@app/domain";
  */
 export class IdentityMapper implements Mapper<object, object> {
 
-    map(inputData: object): Optional<object> {
+    map(inputData: object, _: Context): Optional<object> {
         return inputData;
     }
 }

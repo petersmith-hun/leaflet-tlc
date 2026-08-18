@@ -31,7 +31,9 @@
   "ts-node": {
     "require": ["tsconfig-paths/register"]
   },
-  "exclude": [
-    "./test"
+  "include": [
+    "src/**/*",
+    "package.json",
+    "build-time.json"
   ]
 }

@@ -5,6 +5,7 @@ import Publisher from "@app/pipeline/publisher";
 import Mapper from "@app/pipeline/mapper";
 import { SystemConfig } from "@app/config";
 import { ConfigurationProvider } from "@app/config/configuration-provider";
+import { Context } from "@app/domain";
 
 /**
  * Representation and runner logic of a log processing pipeline.
@@ -17,13 +18,13 @@ export default class Pipeline {
     private readonly publishers: Publisher<any>[];
     private readonly disconnection: Subject<string>;
     private readonly systemConfig: SystemConfig;
-    readonly logStreamName: string;
+    readonly context: Context;
 
     constructor(logStreamName: string, listener: Listener<any>,
                 parsers: Parser<any, any>[], mapper: Mapper<any, any>,
                 publishers: Publisher<any>[], disconnection: Subject<string>,
                 configurationProvider: ConfigurationProvider) {
-        this.logStreamName = logStreamName;
+        this.context = { logStreamName, logSource: listener.sourceName() };
         this.listener = listener;
         this.parsers = parsers;
         this.mapper = mapper;
@@ -45,15 +46,16 @@ export default class Pipeline {
 
         let listenerObservable = this.listener.listen()
             .pipe(finalize(() => setTimeout(
-                () => this.disconnection.next(this.logStreamName),
+                () => this.disconnection.next(this.context.logStreamName),
                 this.systemConfig.reconnectionPollRate)
             ));
+
         this.parsers
             .map(parser => mergeMap(value => parser.parse(value)))
             .forEach(parserMergeMap => listenerObservable = listenerObservable.pipe(parserMergeMap));
 
         listenerObservable
-            .pipe(map(data => this.mapper.map(data)))
+            .pipe(map(data => this.mapper.map(data, this.context)))
             .pipe(filter(data => data !== null))
             .subscribe(value => this.publishers
                 .forEach(publisher => publisher.publish(value)));

@@ -3,7 +3,7 @@ import TLPLogMessage, { ErrorLog } from "@app/client/tlp";
 import { JSONPath } from "jsonpath-plus";
 import log from "@app/util/simple-logger";
 import { CustomMapping, PipelineConfig } from "@app/config";
-import { Optional } from "@app/domain";
+import { Context, Optional } from "@app/domain";
 
 /**
  * Mapper implementation converting custom-structured log objects into TLPLogMessage request objects.
@@ -23,9 +23,13 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
         this.mapping = pipelineConfig.mapperConfig!;
     }
 
-    map(inputData: object): Optional<TLPLogMessage> {
+    map(inputData: object, context: Context): Optional<TLPLogMessage> {
 
         try {
+            const logContext: any = this.mapMDC(inputData);
+            logContext["log_stream"] = context.logStreamName;
+            logContext["log_source"] = context.logSource;
+
             return {
                 source: this.sourceStream,
                 timeStamp: new Date(this.applyPath(inputData, this.mapping.timeStamp) ?? 0).getTime(),
@@ -38,7 +42,7 @@ export default class CustomToTLPMapper implements Mapper<object, TLPLogMessage> 
                 exception: this.mapping.exception || this.mapping.message
                     ? this.mapException(inputData)
                     : undefined,
-                context: this.mapMDC(inputData)
+                context: logContext
             };
 
         } catch (error) {

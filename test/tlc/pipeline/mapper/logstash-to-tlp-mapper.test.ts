@@ -1,7 +1,10 @@
 import LogstashToTLPMapper from "@app/pipeline/mapper/logstash-to-tlp-mapper";
 import TLPLogMessage from "@app/client/tlp";
+import { Context } from "@app/domain";
 
 describe("Unit tests for LogstashToTLPMapper", () => {
+
+    const context: Context = { logSource: "src", logStreamName: "stream" };
 
     let logstashToTLPMapper: LogstashToTLPMapper;
 
@@ -18,7 +21,7 @@ describe("Unit tests for LogstashToTLPMapper", () => {
             const expectedOutput = prepareExpectedOutput(true);
 
             // when
-            const result = logstashToTLPMapper.map(inputDate);
+            const result = logstashToTLPMapper.map(inputDate, context);
 
             // then
             expect(result).toStrictEqual(expectedOutput);
@@ -31,7 +34,7 @@ describe("Unit tests for LogstashToTLPMapper", () => {
             const expectedOutput = prepareExpectedOutput(false);
 
             // when
-            const result = logstashToTLPMapper.map(inputDate);
+            const result = logstashToTLPMapper.map(inputDate, context);
 
             // then
             expect(result).toStrictEqual(expectedOutput);
@@ -41,7 +44,7 @@ describe("Unit tests for LogstashToTLPMapper", () => {
 
             // when
             // @ts-ignore
-            const result = logstashToTLPMapper.map(null);
+            const result = logstashToTLPMapper.map(null, context);
 
             // then
             expect(result).toBeNull();
@@ -79,8 +82,8 @@ describe("Unit tests for LogstashToTLPMapper", () => {
                     stackTrace: "stacktrace"
                 } : undefined,
                 context: withExceptionAndMDC
-                    ? { "requestID": "request-1234" }
-                    : {}
+                    ? { "requestID": "request-1234", "log_source": "src", "log_stream": "stream" }
+                    : { "log_source": "src", "log_stream": "stream" }
             }
         }
     });

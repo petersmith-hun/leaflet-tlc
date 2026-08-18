@@ -25,6 +25,10 @@ export default class FileListener implements Listener<Uint8Array> {
     })
   }
 
+  sourceName(): string {
+    return `file:${this.filename}`;
+  }
+
   private async setupFile () {
     this.fileHandle = await fsp.open(this.filename, 'r');
     const stats = await this.fileHandle.stat();

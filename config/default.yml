@@ -34,7 +34,7 @@ tlc:
   # - log-stream-name: my-log-stream  # (arbitrary)
   #   listener-type: docker           # (docker = will read logs from a Docker log stream; file = will read logs from a plain text log file)
   #   listener-config:                # configuration for the specified listener
-  #     container-name: my-container  # Docker specific configuration, name of the container to listen logs of
+  #     container-name: my-container  # Docker specific configuration, name of the container to listen logs of. If it ends with * then all containers with that prefix will be listened.
   #     source-file-path:             # File source specific configuration, relative or absolute path of the source log file
   #   parsers:                        # parsers to handle the log stream, order of the specified parsers matter
   #     - byte-array                  # parses the log messages from a byte array into a string

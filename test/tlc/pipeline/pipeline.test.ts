@@ -1,6 +1,6 @@
 import sinon, { SinonStubbedInstance } from "sinon";
 import { Observable, Subject } from "rxjs";
-import { Optional } from "@app/domain";
+import { Context, Optional } from "@app/domain";
 import Pipeline from "@app/pipeline";
 import Listener from "@app/pipeline/listener";
 import Parser from "@app/pipeline/parser";
@@ -132,6 +132,9 @@ export class ListenerStub implements Listener<any> {
     listen(): Observable<any> {
         return new Observable();
     }
+    sourceName(): string {
+        return "dummy:test"
+    }
 }
 
 export class ParserStub implements Parser<any, any> {
@@ -141,7 +144,7 @@ export class ParserStub implements Parser<any, any> {
 }
 
 export class MapperStub implements Mapper<any, any> {
-    map(inputData: any): Optional<any> {
+    map(inputData: any, context: Context): Optional<any> {
         return null;
     }
 }

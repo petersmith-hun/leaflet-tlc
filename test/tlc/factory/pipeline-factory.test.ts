@@ -37,7 +37,7 @@ describe("Unit tests for PipelineFactory", () => {
 
     describe("Test scenarios for #createPipeline", () => {
 
-        it("should create the pipeline object according to the given configuration", () => {
+        it("should create the pipeline object according to the given configuration", async () => {
 
             // given
             const pipelineConfig = { logStreamName: "application-1", listenerType: ListenerType.DOCKER } as PipelineConfig;
@@ -46,16 +46,17 @@ describe("Unit tests for PipelineFactory", () => {
             const mapperStub = new MapperStub();
             const publisherStub = new PublisherStub();
 
-            listenerFactoryMock.getListener.withArgs(pipelineConfig).returns(listenerStub);
+            listenerFactoryMock.getListeners.withArgs(pipelineConfig).resolves([listenerStub]);
             parserFactoryMock.getParsers.withArgs(pipelineConfig).returns([parserStub]);
             mapperFactoryMock.getMapper.withArgs(pipelineConfig).returns(mapperStub);
             publisherFactoryMock.getPublishers.withArgs(pipelineConfig).returns([publisherStub]);
 
             // when
-            const result = pipelineFactory.createPipeline(pipelineConfig, disconnectionSubjectMock);
+            const result = (await pipelineFactory.createPipeline(pipelineConfig, disconnectionSubjectMock))[0];
 
             // then
-            expect(result.logStreamName).toBe(pipelineConfig.logStreamName);
+            expect(result.context.logStreamName.startsWith(pipelineConfig.logStreamName)).toBeTruthy();
+            expect(result.context.logStreamName.substring(pipelineConfig.logStreamName.length - 5)).toMatch(/-[0-9a-f]{4}/);
             expect(result.listener).toStrictEqual(listenerStub);
             expect(result.parsers.length).toBe(1);
             expect(result.parsers[0]).toStrictEqual(parserStub);

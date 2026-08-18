@@ -1,7 +1,9 @@
 import { IdentityMapper } from "@app/pipeline/mapper/identity-mapper";
+import { Context } from "@app/domain";
 
 describe("Unit tests for IdentityMapper", () => {
 
+    const context: Context = { logSource: "src", logStreamName: "stream" };
     let identityMapper: IdentityMapper;
 
     beforeEach(() => {
@@ -16,7 +18,7 @@ describe("Unit tests for IdentityMapper", () => {
             const inputData = { data: "something" };
 
             // when
-            const result = identityMapper.map(inputData);
+            const result = identityMapper.map(inputData, context);
 
             // then
             expect(result).toBe(inputData);
