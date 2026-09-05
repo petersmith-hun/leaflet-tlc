@@ -25,7 +25,7 @@ describe("Unit tests for ListenerFactory", () => {
             // given
             const pipelineConfig = preparePipelineConfig(ListenerType.DOCKER);
             const containerDefinition = { Id: "container-1", Names: ["/container-1"] }
-            const dockerLogsApiListener = new DockerLogsApiListener(dockerEngineAPIClient, containerDefinition);
+            const dockerLogsApiListener = new DockerLogsApiListener(dockerEngineAPIClient, containerDefinition.Names[0]);
 
             dockerLogsApiListenerFactoryStub.createListeners.withArgs(pipelineConfig).resolves([dockerLogsApiListener])
 
@@ -37,7 +37,7 @@ describe("Unit tests for ListenerFactory", () => {
             // @ts-ignore
             expect(result.dockerEngineAPIClient === dockerEngineAPIClient).toBe(true);
             // @ts-ignore
-            expect(result.containerDefinition).toBe(containerDefinition);
+            expect(result.containerName).toBe(containerDefinition.Names[0]);
         });
 
         it("should return a file listener", async () => {

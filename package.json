@@ -1,6 +1,6 @@
 {
   "name": "leaflet-tiny-log-collector",
-  "version": "1.3.0-dev",
+  "version": "1.3.1-dev",
   "bin": "./dist/tlc-main.js",
   "scripts": {
     "start": "ts-node ./src/tlc-main.ts",

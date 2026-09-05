@@ -27,7 +27,7 @@ export class DockerLogsApiListenerFactory {
         return this.dockerEngineAPIClient.getContainers()
             .then(response => this.filterRequiredContainers(pipelineConfig, response))
             .then(definitions => definitions
-                .map(definition => new DockerLogsApiListener(this.dockerEngineAPIClient, definition)));
+                .map(definition => new DockerLogsApiListener(this.dockerEngineAPIClient, definition.Names[0])));
     }
 
     private filterRequiredContainers(pipelineConfig: PipelineConfig, containerDefinitions: AxiosResponse<ContainerDefinition[]>): ContainerDefinition[] {
